@@ -12,7 +12,7 @@ CONFIG = {
 s3 = boto3.client('s3')
 
 def get_s3_objects(prefix):
-    """递归获取所有对象（优化版）"""
+    """递归获取所有对象"""
     paginator = s3.get_paginator('list_objects_v2')
     files = {}
     for page in paginator.paginate(
@@ -35,7 +35,7 @@ def get_s3_objects(prefix):
     return files
 
 def load_previous_state():
-    """加载状态文件（增强错误处理）"""
+    """加载状态文件,增强错误处理"""
     try:
         response = s3.get_object(
             Bucket=CONFIG['STATE_BUCKET'],
@@ -56,7 +56,7 @@ def load_previous_state():
         return {}
 
 def save_current_state(current_state):
-    """保存状态文件（强制覆盖）"""
+    """保存状态文件,强制覆盖"""
     s3.put_object(
         Bucket=CONFIG['STATE_BUCKET'],
         Key=CONFIG['STATE_KEY'],
@@ -67,7 +67,7 @@ def save_current_state(current_state):
     )
 
 def save_scan_result(new_files, modified_files):
-    """保存结果文件（带时间戳）"""
+    """保存结果文件,带时间戳"""
     now = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
     result_key = f"{CONFIG['RESULT_PREFIX']}scan_{now}.txt"
     content = f"Scan Time: {now}\n\nNew Files ({len(new_files)}):\n" + '\n'.join(new_files) + \
